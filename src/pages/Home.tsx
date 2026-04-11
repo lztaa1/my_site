@@ -37,6 +37,23 @@ export default function Home() {
 
   // 动画状态
   const [isLoaded, setIsLoaded] = useState(false);
+  // 个人信息状态
+  const [personalInfo, setPersonalInfo] = useState({
+    name: '李卓婷',
+    birthdate: '',
+    email: '1910492869@qq.com',
+    school: '广东科学技术职业学院',
+    major: '商学院 商务数据分析与应用专业'
+  });
+
+  // 处理输入变化
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPersonalInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   useEffect(() => {
     setIsLoaded(true);
@@ -85,6 +102,7 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-4">
               <a href="#" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:text-blue-300 transition-colors duration-300">首页</a>
+              <a href="#personal-info" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:text-blue-300 transition-colors duration-300">个人信息</a>
               <a href="#courses" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:text-blue-300 transition-colors duration-300">课程</a>
               <a href="#certificates" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:text-blue-300 transition-colors duration-300">证书</a>
               <a href="#contact" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:text-blue-300 transition-colors duration-300">联系我</a>
@@ -96,14 +114,83 @@ export default function Home() {
       {/* 个人信息部分 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10 pt-32">
         <div className="text-center transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">李卓婷</h1>
-          <p className="text-xl md:text-2xl text-blue-200 mb-2">广东科学技术职业学院</p>
-          <p className="text-lg md:text-xl text-blue-300">商学院 商务数据分析与应用专业</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">{personalInfo.name}</h1>
+          <p className="text-xl md:text-2xl text-blue-200 mb-2">{personalInfo.school}</p>
+          <p className="text-lg md:text-xl text-blue-300">{personalInfo.major}</p>
           <div className="mt-8 w-32 h-1 bg-blue-400 mx-auto rounded-full transform transition-all duration-1000 ease-out" style={{ width: isLoaded ? '8rem' : '0' }}></div>
           <div className="mt-12">
             <a href="#courses" className="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               查看我的课程
             </a>
+          </div>
+        </div>
+      </div>
+
+      {/* 个人信息编辑部分 */}
+      <div id="personal-info" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-12 text-center transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}>个人信息编辑</h2>
+        <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md p-8 border border-white/20 max-w-2xl mx-auto transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="name" className="block text-gray-300 mb-2">姓名</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                value={personalInfo.name}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div>
+              <label htmlFor="birthdate" className="block text-gray-300 mb-2">出生年月</label>
+              <input 
+                type="date" 
+                id="birthdate" 
+                name="birthdate" 
+                value={personalInfo.birthdate}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="email" className="block text-gray-300 mb-2">邮箱</label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                value={personalInfo.email}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="school" className="block text-gray-300 mb-2">学校</label>
+              <input 
+                type="text" 
+                id="school" 
+                name="school" 
+                value={personalInfo.school}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="major" className="block text-gray-300 mb-2">专业</label>
+              <input 
+                type="text" 
+                id="major" 
+                name="major" 
+                value={personalInfo.major}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          </div>
+          <div className="mt-8">
+            <button className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              保存信息
+            </button>
           </div>
         </div>
       </div>
