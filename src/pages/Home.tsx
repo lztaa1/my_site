@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react';
 
 export default function Home() {
+  // 动画状态
+  const [isLoaded, setIsLoaded] = useState(false);
+  // 个人信息状态
+  const [personalInfo, setPersonalInfo] = useState({
+    name: '李卓婷',
+    birthdate: '',
+    email: '1910492869@qq.com',
+    school: '广东科学技术职业学院',
+    major: '商学院 商务数据分析与应用专业'
+  });
   // 课程数据
-  const courses = [
+  const [courses, setCourses] = useState([
     {
       id: 1,
       name: 'Python基础',
@@ -33,18 +43,33 @@ export default function Home() {
       description: '了解数据库设计原理和SQL语言应用',
       color: 'bg-red-100 text-red-800'
     }
-  ]
-
-  // 动画状态
-  const [isLoaded, setIsLoaded] = useState(false);
-  // 个人信息状态
-  const [personalInfo, setPersonalInfo] = useState({
-    name: '李卓婷',
-    birthdate: '',
-    email: '1910492869@qq.com',
-    school: '广东科学技术职业学院',
-    major: '商学院 商务数据分析与应用专业'
-  });
+  ]);
+  // 证书数据
+  const [certificates, setCertificates] = useState([
+    {
+      id: 1,
+      name: 'Python编程证书',
+      description: 'Python基础课程结业证书',
+      color: 'bg-green-100 text-green-800',
+      issuer: '广东科学技术职业学院'
+    },
+    {
+      id: 2,
+      name: '数据分析证书',
+      description: '数据分析技术课程结业证书',
+      color: 'bg-blue-100 text-blue-800',
+      issuer: '广东科学技术职业学院'
+    },
+    {
+      id: 3,
+      name: '数据库应用证书',
+      description: '数据库原理与应用课程结业证书',
+      color: 'bg-purple-100 text-purple-800',
+      issuer: '广东科学技术职业学院'
+    }
+  ]);
+  // 编辑模式状态
+  const [editingSection, setEditingSection] = useState<string | null>(null);
 
   // 处理输入变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +78,20 @@ export default function Home() {
       ...prev,
       [name]: value
     }));
+  };
+
+  // 处理课程变化
+  const handleCourseChange = (id: number, field: string, value: string) => {
+    setCourses(prev => prev.map(course => 
+      course.id === id ? { ...course, [field]: value } : course
+    ));
+  };
+
+  // 处理证书变化
+  const handleCertificateChange = (id: number, field: string, value: string) => {
+    setCertificates(prev => prev.map(cert => 
+      cert.id === id ? { ...cert, [field]: value } : cert
+    ));
   };
 
   useEffect(() => {
@@ -198,72 +237,111 @@ export default function Home() {
       {/* 课程列表部分 */}
       <div id="courses" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-12 text-center transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}>我的课程</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses.map((course, index) => (
-            <div 
-              key={course.id} 
-              className="bg-white/10 backdrop-blur-md rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-500 border border-white/20 transform hover:-translate-y-2 hover:scale-105"
-              style={{ 
-                opacity: isLoaded ? 1 : 0, 
-                transform: isLoaded ? 'translateY(0)' : 'translateY(30px)',
-                transitionDelay: `${index * 0.1}s`
-              }}
-            >
-              <div className={`${course.color} p-4`}>
-                <h3 className="text-xl font-semibold">{course.name}</h3>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-300">{course.description}</p>
-                <div className="mt-6">
-                  <a href={`/course/${course.id}`} className="inline-block px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105">
-                    查看详情 →
-                  </a>
+        <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md p-8 border border-white/20 max-w-5xl mx-auto transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)' }}>
+          <div className="space-y-8">
+            {courses.map((course, index) => (
+              <div key={course.id} className="border-b border-white/10 pb-6 last:border-b-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-gray-300 mb-2">课程名称</label>
+                    <input 
+                      type="text" 
+                      value={course.name}
+                      onChange={(e) => handleCourseChange(course.id, 'name', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-300 mb-2">颜色主题</label>
+                    <select 
+                      value={course.color}
+                      onChange={(e) => handleCourseChange(course.id, 'color', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="bg-blue-100 text-blue-800">蓝色</option>
+                      <option value="bg-green-100 text-green-800">绿色</option>
+                      <option value="bg-purple-100 text-purple-800">紫色</option>
+                      <option value="bg-amber-100 text-amber-800">琥珀色</option>
+                      <option value="bg-red-100 text-red-800">红色</option>
+                    </select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-gray-300 mb-2">课程描述</label>
+                    <textarea 
+                      value={course.description}
+                      onChange={(e) => handleCourseChange(course.id, 'description', e.target.value)}
+                      rows={3}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                    />
+                  </div>
                 </div>
+                <div className={`${course.color} p-4 rounded-lg mt-4`}>
+                  <h3 className="text-xl font-semibold">{course.name}</h3>
+                </div>
+                <p className="text-gray-300 mt-2">{course.description}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
       {/* 证书展示部分 */}
       <div id="certificates" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-12 text-center transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}>获取证书</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-500 p-6 border border-white/20 transform hover:-translate-y-2 hover:scale-105" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)', transitionDelay: '0.1s' }}>
-            <div className="bg-green-100 text-green-800 p-4 rounded-lg mb-4">
-              <h3 className="text-xl font-semibold">Python编程证书</h3>
-            </div>
-            <p className="text-gray-300 mb-4">Python基础课程结业证书</p>
-            <p className="text-sm text-gray-400">颁发机构：广东科学技术职业学院</p>
-            <div className="mt-6">
-              <a href="/certificate/1" className="inline-block px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105">
-                查看详情 →
-              </a>
-            </div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-500 p-6 border border-white/20 transform hover:-translate-y-2 hover:scale-105" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)', transitionDelay: '0.2s' }}>
-            <div className="bg-blue-100 text-blue-800 p-4 rounded-lg mb-4">
-              <h3 className="text-xl font-semibold">数据分析证书</h3>
-            </div>
-            <p className="text-gray-300 mb-4">数据分析技术课程结业证书</p>
-            <p className="text-sm text-gray-400">颁发机构：广东科学技术职业学院</p>
-            <div className="mt-6">
-              <a href="/certificate/2" className="inline-block px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105">
-                查看详情 →
-              </a>
-            </div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-500 p-6 border border-white/20 transform hover:-translate-y-2 hover:scale-105" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)', transitionDelay: '0.3s' }}>
-            <div className="bg-purple-100 text-purple-800 p-4 rounded-lg mb-4">
-              <h3 className="text-xl font-semibold">数据库应用证书</h3>
-            </div>
-            <p className="text-gray-300 mb-4">数据库原理与应用课程结业证书</p>
-            <p className="text-sm text-gray-400">颁发机构：广东科学技术职业学院</p>
-            <div className="mt-6">
-              <a href="/certificate/3" className="inline-block px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105">
-                查看详情 →
-              </a>
-            </div>
+        <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md p-8 border border-white/20 max-w-5xl mx-auto transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)' }}>
+          <div className="space-y-8">
+            {certificates.map((cert, index) => (
+              <div key={cert.id} className="border-b border-white/10 pb-6 last:border-b-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-gray-300 mb-2">证书名称</label>
+                    <input 
+                      type="text" 
+                      value={cert.name}
+                      onChange={(e) => handleCertificateChange(cert.id, 'name', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-300 mb-2">颜色主题</label>
+                    <select 
+                      value={cert.color}
+                      onChange={(e) => handleCertificateChange(cert.id, 'color', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="bg-green-100 text-green-800">绿色</option>
+                      <option value="bg-blue-100 text-blue-800">蓝色</option>
+                      <option value="bg-purple-100 text-purple-800">紫色</option>
+                      <option value="bg-amber-100 text-amber-800">琥珀色</option>
+                      <option value="bg-red-100 text-red-800">红色</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-300 mb-2">颁发机构</label>
+                    <input 
+                      type="text" 
+                      value={cert.issuer}
+                      onChange={(e) => handleCertificateChange(cert.id, 'issuer', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-gray-300 mb-2">证书描述</label>
+                    <textarea 
+                      value={cert.description}
+                      onChange={(e) => handleCertificateChange(cert.id, 'description', e.target.value)}
+                      rows={3}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                    />
+                  </div>
+                </div>
+                <div className={`${cert.color} p-4 rounded-lg mt-4`}>
+                  <h3 className="text-xl font-semibold">{cert.name}</h3>
+                </div>
+                <p className="text-gray-300 mt-2">{cert.description}</p>
+                <p className="text-sm text-gray-400 mt-1">颁发机构：{cert.issuer}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
