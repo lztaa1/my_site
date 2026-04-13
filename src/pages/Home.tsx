@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 export default function Home() {
   // 动画状态
   const [isLoaded, setIsLoaded] = useState(false);
+  // 密码保护状态
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPasswordInput, setShowPasswordInput] = useState(true);
   // 个人信息状态
   const [personalInfo, setPersonalInfo] = useState({
     name: '李卓婷',
@@ -94,6 +98,18 @@ export default function Home() {
     ));
   };
 
+  // 密码验证函数
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // 这里使用简单的密码验证，实际项目中应该使用更安全的方式
+    if (password === '123456') { // 默认密码为123456，您可以修改
+      setIsAuthenticated(true);
+      setShowPasswordInput(false);
+    } else {
+      alert('密码错误，请重试');
+    }
+  };
+
   useEffect(() => {
     setIsLoaded(true);
   }, []);
@@ -132,6 +148,35 @@ export default function Home() {
           }
         }
       `}</style>
+
+      {/* 密码输入界面 */}
+      {showPasswordInput && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80 backdrop-blur-sm">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-lg p-8 max-w-md w-full border border-white/20">
+            <h2 className="text-2xl font-bold text-center mb-6">请输入密码查看个人信息</h2>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="password" className="block text-gray-300 mb-2">密码</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="请输入密码"
+                  required
+                />
+              </div>
+              <div>
+                <button type="submit" className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                  确认
+                </button>
+              </div>
+              <p className="text-center text-sm text-gray-400">默认密码: 123456</p>
+            </form>
+          </div>
+        </div>
+      )}
       {/* 导航栏 */}
       <nav className="bg-black/30 backdrop-blur-md shadow-sm fixed top-0 left-0 right-0 z-50 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,73 +211,75 @@ export default function Home() {
       </div>
 
       {/* 个人信息编辑部分 */}
-      <div id="personal-info" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-12 text-center transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}>个人信息编辑</h2>
-        <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md p-8 border border-white/20 max-w-2xl mx-auto transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)' }}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="name" className="block text-gray-300 mb-2">姓名</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                value={personalInfo.name}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+      {isAuthenticated && (
+        <div id="personal-info" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-12 text-center transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}>个人信息编辑</h2>
+          <div className="bg-white/10 backdrop-blur-md rounded-lg shadow-md p-8 border border-white/20 max-w-2xl mx-auto transform transition-all duration-1000 ease-out" style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(30px)' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-gray-300 mb-2">姓名</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name" 
+                  value={personalInfo.name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div>
+                <label htmlFor="birthdate" className="block text-gray-300 mb-2">出生年月</label>
+                <input 
+                  type="date" 
+                  id="birthdate" 
+                  name="birthdate" 
+                  value={personalInfo.birthdate}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="email" className="block text-gray-300 mb-2">邮箱</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={personalInfo.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="school" className="block text-gray-300 mb-2">学校</label>
+                <input 
+                  type="text" 
+                  id="school" 
+                  name="school" 
+                  value={personalInfo.school}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor="major" className="block text-gray-300 mb-2">专业</label>
+                <input 
+                  type="text" 
+                  id="major" 
+                  name="major" 
+                  value={personalInfo.major}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
             </div>
-            <div>
-              <label htmlFor="birthdate" className="block text-gray-300 mb-2">出生年月</label>
-              <input 
-                type="date" 
-                id="birthdate" 
-                name="birthdate" 
-                value={personalInfo.birthdate}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+            <div className="mt-8">
+              <button className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                保存信息
+              </button>
             </div>
-            <div className="md:col-span-2">
-              <label htmlFor="email" className="block text-gray-300 mb-2">邮箱</label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                value={personalInfo.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="school" className="block text-gray-300 mb-2">学校</label>
-              <input 
-                type="text" 
-                id="school" 
-                name="school" 
-                value={personalInfo.school}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="major" className="block text-gray-300 mb-2">专业</label>
-              <input 
-                type="text" 
-                id="major" 
-                name="major" 
-                value={personalInfo.major}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-          </div>
-          <div className="mt-8">
-            <button className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              保存信息
-            </button>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 课程列表部分 */}
       <div id="courses" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
